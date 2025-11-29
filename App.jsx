@@ -205,6 +205,17 @@ function App() {
                   >
                     Join
                   </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="mt-1 ml-2"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`/join ${meeting.id}`)
+                      alert('Copied Telegram join command to clipboard — open your bot chat and paste it.')
+                    }}
+                  >
+                    Join via Telegram
+                  </Button>
                 </div>
               </div>
             ))

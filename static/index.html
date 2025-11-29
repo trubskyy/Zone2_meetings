@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zone 2 Meeting - Prototype</title>
+    <style>
+      body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 2rem; }
+      .card { border: 1px solid #e6e6e6; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
+      .button { padding: .5rem 1rem; border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 6px; }
+      .button.primary { background: #00b894; color: white; border-color:#00b894; }
+    </style>
+  </head>
+  <body>
+    <h1>Zone 2 Meeting - Prototype</h1>
+    <p>Simple meetings list with Bio-metrics and Telegram integration.</p>
+    <div id="meetings"></div>
+    <template id="meeting_tmpl">
+      <div class="card">
+        <div><strong class="title"></strong></div>
+        <div class="meta"></div>
+        <div class="controls" style="margin-top:8px"></div>
+      </div>
+    </template>
+    <script>
+      const API_BASE = '/api'
+      async function fetchMeetings() {
+        const resp = await fetch(API_BASE + '/meetings')
+        const data = await resp.json()
+        const container = document.getElementById('meetings')
+        container.innerHTML = ''
+        data.meetings.forEach(m => {
+          const tmpl = document.getElementById('meeting_tmpl')
+          const node = tmpl.content.cloneNode(true)
+          node.querySelector('.title').innerText = m.title
+          node.querySelector('.meta').innerText = `${m.participants} participants • ${m.time}`
+          const controls = node.querySelector('.controls')
+          const joinBtn = document.createElement('button')
+          joinBtn.className = 'button primary'
+          joinBtn.innerText = 'Join in Web'
+          joinBtn.onclick = async () => {
+            const res = await fetch(API_BASE + `/meetings/${m.id}/join`, { method: 'POST' })
+            const j = await res.json()
+            if (j.success) alert('Joined meeting (web). You can use Telegram bot to join with /join ' + m.id)
+            else alert('Failed: ' + JSON.stringify(j))
+          }
+          const tBtn = document.createElement('button')
+          tBtn.className = 'button'
+          tBtn.style.marginLeft = '0.5rem'
+          tBtn.innerText = 'Join via Telegram'
+          tBtn.onclick = () => { navigator.clipboard.writeText('/join ' + m.id); alert('Copied Telegram command: /join ' + m.id) }
+          controls.appendChild(joinBtn)
+          controls.appendChild(tBtn)
+          container.appendChild(node)
+        })
+      }
+      fetchMeetings()
+    </script>
+  </body>
+</html>

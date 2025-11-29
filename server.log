@@ -1,0 +1,31 @@
+nohup: ignoring input
+ * Serving Flask app 'main'
+ * Debug mode: on
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.0.10.138:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 949-303-881
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:24:36] "POST /api/meetings/1/telegram-join HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:24:40] "[35m[1mPOST /api/meetings/1/messages HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:25:12] "GET /api/biometrics/current HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:25:18] "GET / HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/workspaces/Zone2_meetings/tests/test_meetings_endpoints.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 949-303-881
+INFO:werkzeug: * Detected change in '/workspaces/Zone2_meetings/tests/test_meetings_endpoints.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 949-303-881
+INFO:werkzeug: * Detected change in '/workspaces/Zone2_meetings/tests/test_meetings_endpoints.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 949-303-881
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:31:15] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:31:15] "GET /api/meetings HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:31:15] "GET /favicon.ico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [29/Nov/2025 21:31:24] "POST /api/meetings/1/join HTTP/1.1" 200 -

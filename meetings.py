@@ -42,10 +42,10 @@ mock_meetings = [
 
 # Mock participants data
 mock_participants = [
-    {"name": "Alice", "heartRate": 138, "zone": "Zone 2", "status": "active"},
-    {"name": "Bob", "heartRate": 155, "zone": "Zone 3", "status": "active"},
-    {"name": "Carol", "heartRate": 142, "zone": "Zone 2", "status": "active"},
-    {"name": "David", "heartRate": 134, "zone": "Zone 2", "status": "active"}
+    {"name": "Alice", "heartRate": 138, "zone": "Zone 2", "status": "active", "telegram_id": None},
+    {"name": "Bob", "heartRate": 155, "zone": "Zone 3", "status": "active", "telegram_id": None},
+    {"name": "Carol", "heartRate": 142, "zone": "Zone 2", "status": "active", "telegram_id": None},
+    {"name": "David", "heartRate": 134, "zone": "Zone 2", "status": "active", "telegram_id": None}
 ]
 
 @meetings_bp.route('/meetings', methods=['GET'])
@@ -66,7 +66,8 @@ def get_meeting(meeting_id):
     return jsonify({
         "success": True,
         "meeting": meeting,
-        "participants": mock_participants
+        "participants": meeting.get('participants', mock_participants),
+        "messages": meeting.get('messages', [])
     })
 
 @meetings_bp.route('/meetings', methods=['POST'])
@@ -80,7 +81,9 @@ def create_meeting():
         "time": data.get("time", "TBD"),
         "participants": data.get("participants", 1),
         "status": "upcoming",
-        "created_at": datetime.now().isoformat()
+        "created_at": datetime.now().isoformat(),
+        "participants": [],
+        "messages": []
     }
     
     mock_meetings.append(new_meeting)
@@ -99,6 +102,13 @@ def join_meeting(meeting_id):
     
     # Simulate joining the meeting
     meeting["status"] = "active"
+    # Add a generic participant if no specific user provided
+    return jsonify({
+        "success": True,
+        "message": "Successfully joined meeting",
+        "meeting": meeting,
+        "participants": meeting.get('participants', mock_participants)
+    })
     
     return jsonify({
         "success": True,
@@ -136,4 +146,65 @@ def save_voice_note(meeting_id):
         "success": True,
         "voice_note": voice_note
     }), 201
+
+
+@meetings_bp.route('/meetings/<int:meeting_id>/telegram-join', methods=['POST'])
+def telegram_join(meeting_id):
+    data = request.get_json()
+    telegram_id = data.get('telegram_id')
+    name = data.get('name', 'TelegramUser')
+    meeting = next((m for m in mock_meetings if m['id'] == meeting_id), None)
+    if not meeting:
+        return jsonify({"success": False, "error": "Meeting not found"}), 404
+    participants = meeting.get('participants', [])
+    # if participants is numeric (initial mock data is a count), convert to list
+    if isinstance(participants, int):
+        participants = []
+        meeting['participants'] = participants
+    # ensure participant not already in list
+    if any(p.get('telegram_id') == telegram_id for p in participants):
+        return jsonify({"success": True, "message": "Already joined", "meeting": meeting, "participants": participants})
+    participant = {"name": name, "heartRate": random.randint(120,160), "zone": "Zone 2", "status": "active", "telegram_id": telegram_id}
+    participants.append(participant)
+    meeting['participants'] = participants
+    meeting['participants_count'] = len(participants)
+    return jsonify({"success": True, "message": "Joined via Telegram", "meeting": meeting, "participants": participants}), 200
+
+
+@meetings_bp.route('/meetings/<int:meeting_id>/telegram-leave', methods=['POST'])
+def telegram_leave(meeting_id):
+    data = request.get_json()
+    telegram_id = data.get('telegram_id')
+    meeting = next((m for m in mock_meetings if m['id'] == meeting_id), None)
+    if not meeting:
+        return jsonify({"success": False, "error": "Meeting not found"}), 404
+    participants = meeting.get('participants', [])
+    if isinstance(participants, int):
+        participants = []
+        meeting['participants'] = participants
+    new_parts = [p for p in participants if p.get('telegram_id') != telegram_id]
+    meeting['participants'] = new_parts
+    meeting['participants_count'] = len(new_parts)
+    return jsonify({"success": True, "message": "Left meeting", "meeting": meeting, "participants": new_parts})
+
+
+@meetings_bp.route('/meetings/<int:meeting_id>/messages', methods=['GET'])
+def get_messages(meeting_id):
+    meeting = next((m for m in mock_meetings if m['id'] == meeting_id), None)
+    if not meeting:
+        return jsonify({"success": False, "error": "Meeting not found"}), 404
+    return jsonify({"success": True, "messages": meeting.get('messages', [])})
+
+
+@meetings_bp.route('/meetings/<int:meeting_id>/messages', methods=['POST'])
+def post_message(meeting_id):
+    data = request.get_json()
+    meeting = next((m for m in mock_meetings if m['id'] == meeting_id), None)
+    if not meeting:
+        return jsonify({"success": False, "error": "Meeting not found"}), 404
+    messages = meeting.get('messages', [])
+    message = {"id": random.randint(10000,99999), "sender": data.get('sender', 'Unknown'), "text": data.get('text', ''), "timestamp": datetime.now().isoformat()}
+    messages.append(message)
+    meeting['messages'] = messages
+    return jsonify({"success": True, "message": message}), 201
 
