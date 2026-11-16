@@ -37,4 +37,4 @@ Backend settings are env vars prefixed `Z2_` (see `backend/app/config.py`, `back
 
 ## Repo hygiene
 
-`_legacy/` holds the pre-rewrite prototype and business-plan drafts. They're kept only until the owner deletes them. Don't build on them.
+The pre-rewrite prototype and business-plan drafts were deleted on 2026-11-15. They're in git history before commit `24c0ede` if ever needed. Don't revive them.
