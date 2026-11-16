@@ -37,4 +37,4 @@ Backend settings are env vars prefixed `Z2_` (see `backend/app/config.py`, `back
 
 ## Repo hygiene
 
-The pre-rewrite prototype and business-plan drafts were deleted on 2026-11-15. They're in git history before commit `24c0ede` if ever needed. Don't revive them.
+The pre-rewrite prototype and business-plan drafts were deleted on 2026-11-15. They're in git history (last present in commit `71e3d24`) if ever needed. Don't revive them.
