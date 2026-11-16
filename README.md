@@ -9,12 +9,11 @@
 | Doc | What's in it |
 |---|---|
 | [docs/vision.md](docs/vision.md) | Product, audience, principles |
-| [docs/market.md](docs/market.md) | Competitors and positioning |
-| [docs/business-model.md](docs/business-model.md) | Phases, pricing hypotheses, unit costs |
 | [docs/roadmap.md](docs/roadmap.md) | Phases with exit tests, current checklist |
 | [docs/architecture.md](docs/architecture.md) | Technical decisions, data model, live protocol |
 | [docs/risks-and-safety.md](docs/risks-and-safety.md) | Safety, health-data privacy, risks |
-| [docs/community-playbook.md](docs/community-playbook.md) | How to run Zone 2 Club sessions |
+
+Market, business model, positioning, community playbook, content and sales live in the private company repo [`zone2-company`](https://github.com/trubskyy/zone2-company).
 
 ## What works today (phase 1)
 

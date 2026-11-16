@@ -4,7 +4,7 @@ Each phase has an exit test. Move on when the test passes, not when a date arriv
 
 ## Phase 0: Concierge MVP (weeks 1–8, almost no code)
 
-Run **Zone 2 Club** by hand. See [community-playbook.md](community-playbook.md).
+Run **Zone 2 Club** by hand. See the community playbook in the company repo ([`content/community-playbook.md`](https://github.com/trubskyy/zone2-company/blob/main/content/community-playbook.md)).
 
 - A Telegram channel for announcements, plus one group per regular session. Audio uses Telegram's native voice chat.
 - A Strava club for activity recaps.

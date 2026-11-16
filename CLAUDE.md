@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Zone 2 Meeting: people take meetings while exercising at Zone 2 intensity. It ships as a **Telegram Mini App** and a **standalone web app** from one web codebase, with a community program ("Zone 2 Club") around it. Product and technical decisions live in `docs/`. [docs/architecture.md](docs/architecture.md) is the source of truth for technical choices, and [docs/roadmap.md](docs/roadmap.md) has the current checklist. Update them when you change a decision.
+Zone 2 Meeting: people take meetings while exercising at Zone 2 intensity. It ships as a **Telegram Mini App** and a **standalone web app** from one web codebase, with a community program ("Zone 2 Club") around it. Product and technical decisions live in `docs/`. Business, positioning, content and sales live in the separate company repo `~/Documents/Projects/zone2-company` (GitHub `trubskyy/zone2-company`); its `brain/product-facts.md` lists what's shipped, so update it when a feature ships. [docs/architecture.md](docs/architecture.md) is the source of truth for technical choices, and [docs/roadmap.md](docs/roadmap.md) has the current checklist. Update them when you change a decision.
 
 ## Commands
 

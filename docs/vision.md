@@ -8,7 +8,7 @@
 
 The usual quick field check for Zone 2 is the **talk test**: you can hold a full conversation, but you couldn't sing. A meeting *is* a talk test. If you can keep the conversation going, you are very likely in the right zone. Exercise and talk don't compete here; they reinforce each other.
 
-The second insight comes from the market. A walking-meeting app on its own has been tried (see [market.md](market.md)). People rarely switch meeting tools for health reasons alone. They do join *communities* and *rituals*, and they come back for them. So we lead with the community and treat the meeting tool as the means.
+The second insight comes from the market. A walking-meeting app on its own has been tried (see [`business/market.md`](https://github.com/trubskyy/zone2-company/blob/main/business/market.md) in the company repo). People rarely switch meeting tools for health reasons alone. They do join *communities* and *rituals*, and they come back for them. So we lead with the community and treat the meeting tool as the means.
 
 ## What we are building
 
