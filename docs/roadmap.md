@@ -20,6 +20,7 @@ Run **Zone 2 Club** by hand. See the community playbook in the company repo ([`c
 - [x] Live zone room over WebSocket (heart rate or self-reported effort)
 - [x] Web app: meeting list, create, live view, profile, Web Bluetooth heart rate
 - [x] Bot: `/start` opens the Mini App, `/sessions` lists upcoming sessions
+- [x] Deployable: one Docker image, Alembic migrations, `fly.toml` ([deploy.md](deploy.md))
 - [ ] Deploy (one small VM or a PaaS such as Fly.io or Railway, with managed Postgres)
 - [ ] Register the bot and Mini App with BotFather; set the domain for the Login Widget
 - [ ] Bot reminders 15 min before a session you joined

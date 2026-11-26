@@ -2,7 +2,7 @@ from collections.abc import Iterator
 from datetime import UTC, datetime
 
 from fastapi import Request
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -16,19 +16,36 @@ def utcnow() -> datetime:
     return datetime.now(UTC).replace(tzinfo=None)
 
 
-def make_sessionmaker(database_url: str) -> sessionmaker[Session]:
+def normalize_database_url(url: str) -> str:
+    """Hosting providers hand out postgres:// or postgresql:// URLs; SQLAlchemy needs the psycopg 3 driver named."""
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix) :]
+    return url
+
+
+def make_engine(database_url: str) -> Engine:
+    database_url = normalize_database_url(database_url)
     kwargs: dict = {}
     if database_url.startswith("sqlite"):
         kwargs["connect_args"] = {"check_same_thread": False}
         if database_url in ("sqlite://", "sqlite:///:memory:"):
             # In-memory DB must share one connection across threads (tests).
             kwargs["poolclass"] = StaticPool
-    engine = create_engine(database_url, **kwargs)
-    # Import models so they register on Base.metadata before create_all.
+    else:
+        kwargs["pool_pre_ping"] = True
+    return create_engine(database_url, **kwargs)
+
+
+def make_sessionmaker(database_url: str) -> sessionmaker[Session]:
+    engine = make_engine(database_url)
+    # Import models so they register on Base.metadata.
     from app import models  # noqa: F401
 
-    # Phase 1 uses create_all; switch to Alembic migrations before the first production schema change.
-    Base.metadata.create_all(engine)
+    # SQLite (local dev and tests) creates tables directly. Postgres is managed only by Alembic
+    # migrations (`alembic upgrade head`, run at container start); see migrations/.
+    if engine.dialect.name == "sqlite":
+        Base.metadata.create_all(engine)
     return sessionmaker(engine, expire_on_commit=False)
 
 

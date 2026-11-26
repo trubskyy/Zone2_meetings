@@ -14,6 +14,7 @@ This is the single source of truth for technical decisions. It replaces the thre
 | 6 | **Heart rate comes from the client.** Sources in order of priority: (a) Web Bluetooth heart-rate strap on desktop Chrome or Android Chrome; (b) self-reported effort or talk test; (c) later, a native companion for iOS, HealthKit and Wear. Garmin, Strava and Apple cloud APIs are used **only for after-session recaps**. | Cloud fitness APIs aren't real-time. iOS web views (including Telegram's) have no Web Bluetooth. |
 | 7 | **Zones are personal.** Default zones use the Karvonen method (percent of heart-rate reserve) with an age-based max-HR estimate (Tanaka formula). Users can override the Zone 2 bounds with lab or field test results. | Fixed BPM cutoffs are wrong for most people. |
 | 8 | **Privacy by default.** Other participants see your *zone*; your BPM is shown only if you set `share_bpm`. | Heart rate is health data, and showing it to coworkers raises workplace-surveillance concerns. |
+| 9 | **One container, one origin.** The API serves the built web app and runs the bot in-process; Alembic migrates Postgres at start. Fly.io, one always-on machine. See `deploy.md`. | No CORS or WebSocket proxying between two hosts, one thing to deploy, and the in-memory `LiveHub` and polling bot need exactly one process anyway. |
 
 ## Layout
 
@@ -29,7 +30,8 @@ backend/            FastAPI app (Python 3.11+)
     auth/           Telegram initData + Login Widget verification, JWT
     api/            routers: auth, me, meetings, live (WebSocket)
     live.py         LiveHub: in-memory room state and broadcasting
-    bot.py          Telegram bot (python-telegram-bot v21, polling)
+    bot.py          Telegram bot (python-telegram-bot v21, polling; in-process in production)
+  migrations/       Alembic migrations (Postgres)
   tests/
 web/                React + TS Mini App / PWA
   src/
@@ -65,4 +67,4 @@ Server → all clients in the room:
 
 ## Scaling path (only when needed)
 
-Move to Postgres, then Alembic migrations, then Redis pub/sub for `LiveHub`, then LiveKit audio for standalone, then the native companion app.
+Postgres and Alembic migrations are in place. Next: Redis pub/sub for `LiveHub`, then LiveKit audio for standalone, then the native companion app.

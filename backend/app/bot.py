@@ -1,6 +1,7 @@
 """Telegram bot: the front door to the Mini App.
 
-Run with `python -m app.bot`. It reads the same DB as the API (Z2_DATABASE_URL).
+Run standalone with `python -m app.bot`, or inside the API process with Z2_RUN_BOT=true (production).
+It reads the same DB as the API (Z2_DATABASE_URL).
 Telegram requires the Mini App URL (Z2_WEB_APP_URL) to be HTTPS — use a tunnel in development.
 """
 
@@ -11,7 +12,9 @@ from sqlalchemy import select
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, MenuButtonWebApp, Update, WebAppInfo
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-from app.config import get_settings
+from sqlalchemy.orm import Session, sessionmaker as SessionMaker
+
+from app.config import Settings, get_settings
 from app.db import make_sessionmaker, utcnow
 from app.models import Meeting, Visibility
 
@@ -29,11 +32,11 @@ def _open_button(url: str, text: str = "Open Zone 2 Club") -> InlineKeyboardMark
     return InlineKeyboardMarkup([[InlineKeyboardButton(text, web_app=WebAppInfo(url=url))]])
 
 
-def build_application() -> Application:
-    settings = get_settings()
+def build_application(settings: Settings | None = None, sessionmaker: SessionMaker[Session] | None = None) -> Application:
+    settings = settings or get_settings()
     if not settings.telegram_bot_token:
         raise SystemExit("Set Z2_TELEGRAM_BOT_TOKEN to run the bot.")
-    sessionmaker = make_sessionmaker(settings.database_url)
+    sessionmaker = sessionmaker or make_sessionmaker(settings.database_url)
     web_app_url = settings.web_app_url
 
     async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -60,6 +63,19 @@ def build_application() -> Application:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("sessions", sessions))
     return application
+
+
+async def start_polling(application: Application) -> None:
+    """Start the bot inside an already-running event loop (the API's lifespan)."""
+    await application.initialize()
+    await application.start()
+    await application.updater.start_polling(drop_pending_updates=False)
+
+
+async def stop_polling(application: Application) -> None:
+    await application.updater.stop()
+    await application.stop()
+    await application.shutdown()
 
 
 def main() -> None:

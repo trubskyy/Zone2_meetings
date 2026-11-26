@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     dev_login: bool = False
     web_app_url: str = "http://localhost:5173"
     cors_origins: list[str] = ["http://localhost:5173"]
+    # Directory with the built web app (web/dist). When set, the API serves it at "/" (single-origin deploy).
+    static_dir: str | None = None
+    # Run the Telegram bot (long polling) inside the API process. Only one process may poll per bot token.
+    run_bot: bool = False
 
 
 @lru_cache

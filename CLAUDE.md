@@ -15,6 +15,7 @@ uvicorn app.main:create_app --factory --reload   # API on :8000; there is no mod
 pytest                                           # all tests
 pytest tests/test_meetings.py::test_live_room_shares_zone_not_bpm   # single test
 python -m app.bot                                # Telegram bot (polling); needs Z2_TELEGRAM_BOT_TOKEN
+alembic revision --autogenerate -m "..."         # after changing models.py; see docs/deploy.md
 
 # web/ (Node 18+)
 npm install && npm run dev      # :5173, proxies /api (incl. WebSocket) to :8000
@@ -33,7 +34,8 @@ Backend settings are env vars prefixed `Z2_` (see `backend/app/config.py`, `back
 - **Zones:** `zones.py` is pure. It uses Karvonen floors with a Tanaka max-HR estimate, measured `zone2_low/high` override with the ladder kept monotonic, and `EFFORT_ZONES` maps talk-test answers to zones for users without sensors.
 - **Audio:** not hosted inside Telegram. A meeting has a `voice_link` (a Telegram voice-chat invite). Standalone audio (LiveKit) is planned, not built.
 - **Web:** `telegram.ts` wraps the Mini App SDK so every call is safe outside Telegram. `heartRate.ts` uses Web Bluetooth (Heart Rate service 0x180D), which doesn't exist on iOS, so the talk-test UI must always remain a working fallback. Navigation is a `View` union in `App.tsx` with no router. Invite deep links use the payload `m<id>[_<invite_code>]` via `?startapp=` (Telegram) or `?start=` (web).
-- **Schema changes:** tables come from `Base.metadata.create_all`. There are no migrations yet. Introduce Alembic before the first production schema change.
+- **Schema changes:** Postgres is managed only by Alembic (`backend/migrations/`, applied at container start). SQLite (local dev, tests) still uses `create_all`. Every change to `models.py` needs a migration; `tests/test_deploy.py::test_migrations_match_models` fails without one.
+- **Deploy:** one Docker image, one instance (`Dockerfile`, `fly.toml`, [docs/deploy.md](docs/deploy.md)). FastAPI serves the built web app when `Z2_STATIC_DIR` is set, and runs the bot in its lifespan when `Z2_RUN_BOT` is set. Don't scale to two instances: `LiveHub` is in memory and only one process may poll the bot.
 
 ## Repo hygiene
 

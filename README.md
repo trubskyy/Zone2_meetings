@@ -12,6 +12,7 @@
 | [docs/roadmap.md](docs/roadmap.md) | Phases with exit tests, current checklist |
 | [docs/architecture.md](docs/architecture.md) | Technical decisions, data model, live protocol |
 | [docs/risks-and-safety.md](docs/risks-and-safety.md) | Safety, health-data privacy, risks |
+| [docs/deploy.md](docs/deploy.md) | Deploying: Docker image, Fly.io, Postgres, BotFather |
 
 Market, business model, positioning, community playbook, content and sales live in the private company repo [`zone2-company`](https://github.com/trubskyy/zone2-company).
 
